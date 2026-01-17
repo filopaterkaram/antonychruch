@@ -27,7 +27,13 @@
             --radius: 12px;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; 
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -webkit-touch-callout: none;
+        }
         
         body { background-color: var(--bg-light); color: var(--text-dark); min-height: 100vh; display: flex; flex-direction: column; }
 
@@ -1144,6 +1150,82 @@
 
         // Initialize App
         const app = new App();
+
+        // --- ANTI-SCREENSHOT & ANTI-COPY PROTECTION ---
+        // منع النسخ
+        document.addEventListener('copy', (e) => {
+            e.preventDefault();
+            app.toast('❌ النسخ غير مسموح به', 'error');
+            return false;
+        });
+
+        // منع قائمة السياق (كلك يميني)
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            app.toast('❌ هذه العملية غير مسموح بها', 'error');
+            return false;
+        });
+
+        // منع الطباعة (Ctrl+P)
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                e.preventDefault();
+                app.toast('❌ الطباعة غير مسموح بها', 'error');
+                return false;
+            }
+            // منع Ctrl+S
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                app.toast('❌ الحفظ غير مسموح به', 'error');
+                return false;
+            }
+            // منع Ctrl+Shift+I (Developer Tools)
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'I') {
+                e.preventDefault();
+                return false;
+            }
+            // منع F12 (Developer Tools)
+            if (e.key === 'F12') {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // منع اختيار النص (Select)
+        document.addEventListener('selectstart', (e) => {
+            e.preventDefault();
+            return false;
+        });
+
+        // منع القص (Cut - Ctrl+X)
+        document.addEventListener('cut', (e) => {
+            e.preventDefault();
+            app.toast('❌ القص غير مسموح به', 'error');
+            return false;
+        });
+
+        // منع Drag و Drop
+        document.addEventListener('dragstart', (e) => {
+            e.preventDefault();
+            return false;
+        });
+
+        // تعطيل الفحص (Inspect Element) من خلال عدة طرق
+        window.addEventListener('error', (e) => {
+            if (e.message.includes('Uncaught')) {
+                // محاولة منع أدوات المطورين
+            }
+        });
+
+        // منع Screenshot عبر keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // منع PrtScn (Print Screen)
+            if (e.key === 'PrintScreen') {
+                e.preventDefault();
+                app.toast('❌ أخذ لقطات الشاشة غير مسموح به', 'error');
+                return false;
+            }
+        });
 
         // Handle Form Submission
         document.getElementById('auth-form').addEventListener('submit', async (e) => {
