@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - كنيسة القديس أنطونيوس</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1a3a52 0%, #2d5a7b 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 1000px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .auth-form {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-header h2 {
+            color: #1a3a52;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .form-header p {
+            color: #666;
+        }
+
+        .form-toggle {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 20px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            color: #999;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .toggle-btn.active {
+            color: #1a3a52;
+            border-bottom-color: #d4af37;
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .form-footer p {
+            color: #666;
+        }
+
+        .form-footer a {
+            color: #d4af37;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .auth-container {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+
+            .auth-form {
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Login Form -->
+        <div class="auth-form">
+            <div class="form-toggle">
+                <button class="toggle-btn active" onclick="switchForm('login')">تسجيل الدخول</button>
+                <button class="toggle-btn" onclick="switchForm('register')">إنشاء حساب</button>
+            </div>
+
+            <!-- Login Section -->
+            <div id="login-section" class="form-section active">
+                <div class="form-header">
+                    <h2>أهلاً بك</h2>
+                    <p>سجل دخولك لمتابعة رحلتك الروحية</p>
+                </div>
+
+                <div id="login-error" class="error-message"></div>
+
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-email">البريد الإلكتروني</label>
+                        <input type="email" id="login-email" placeholder="أدخل بريدك الإلكتروني" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="login-password">كلمة المرور</label>
+                        <input type="password" id="login-password" placeholder="أدخل كلمة المرور" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                        تسجيل الدخول
+                    </button>
+                </form>
+            </div>
+
+            <!-- Register Section -->
+            <div id="register-section" class="form-section">
+                <div class="form-header">
+                    <h2>إنشاء حساب جديد</h2>
+                    <p>انضم إلى عائلتنا الروحية</p>
+                </div>
+
+                <div id="register-error" class="error-message"></div>
+                <div id="register-success" class="success-message"></div>
+
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="register-name">الاسم الكامل</label>
+                        <input type="text" id="register-name" placeholder="أدخل اسمك الكامل" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="register-email">البريد الإلكتروني</label>
+                        <input type="email" id="register-email" placeholder="أدخل بريدك الإلكتروني" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="register-phone">رقم الموبايل (اختياري)</label>
+                        <input type="tel" id="register-phone" placeholder="أدخل رقم موبايلك">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="register-password">كلمة المرور</label>
+                        <input type="password" id="register-password" placeholder="أنشئ كلمة مرور قوية" required>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="is-church-member" name="is-church-member">
+                        <label for="is-church-member" style="margin: 0;">أنا من أبناء كنيسة القديس أنطونيوس</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                        إنشاء الحساب
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Info Section -->
+        <div style="color: white; display: flex; flex-direction: column; justify-content: center;">
+            <h1 style="font-size: 36px; margin-bottom: 20px;">كنيسة القديس العظيم الأنبا أنطونيوس</h1>
+            <p style="font-size: 18px; line-height: 1.8; margin-bottom: 20px;">
+                نهضة كنيسة القديس العظيم الأنبا أنطونيوس بالمنيا تسعى لنشر الكلمة والعلم الروحي بين أبناء الكنيسة من خلال وعظات روحية وامتحانات تقويمية.
+            </p>
+            <p style="font-size: 16px; opacity: 0.9;">
+                سجل معنا الآن واستمتع بمحتوى روحي متميز وتفاعل مباشر مع قادة الكنيسة.
+            </p>
+        </div>
+    </div>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script>
+        // فحص ما إذا تم تحميل Supabase بنجاح
+        window.addEventListener('load', function() {
+            if (typeof window.supabase === 'undefined') {
+                console.error('❌ فشل تحميل مكتبة Supabase من CDN');
+                document.body.innerHTML = `
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        height: 100vh;
+                        background: linear-gradient(135deg, #1a3a52 0%, #2d5a7b 100%);
+                        font-family: 'Cairo', Arial, sans-serif;
+                        direction: rtl;
+                    ">
+                        <div style="
+                            background: white;
+                            padding: 40px;
+                            border-radius: 12px;
+                            max-width: 400px;
+                            text-align: center;
+                            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+                        ">
+                            <h1 style="color: #f44336; margin-bottom: 20px;">⚠️ مشكلة في الاتصال</h1>
+                            <p style="color: #666; font-size: 16px; line-height: 1.6;">
+                                فشل تحميل مكتبة Supabase من CDN.
+                            </p>
+                            <div style="
+                                background: #f5f5f5;
+                                padding: 15px;
+                                border-radius: 6px;
+                                margin: 20px 0;
+                                text-align: right;
+                            ">
+                                <p style="color: #1a3a52; margin: 10px 0;"><strong>✓ تأكد من:</strong></p>
+                                <ul style="color: #666; text-align: right; margin-right: 20px;">
+                                    <li>الاتصال بالإنترنت متصل</li>
+                                    <li>جرّب متصفح مختلف</li>
+                                    <li>امسح Cache (Ctrl+Shift+Delete)</li>
+                                    <li>أعد تحميل الصفحة (Ctrl+F5)</li>
+                                </ul>
+                            </div>
+                            <button onclick="location.reload()" style="
+                                background: #1a3a52;
+                                color: white;
+                                border: none;
+                                padding: 12px 30px;
+                                border-radius: 6px;
+                                font-size: 16px;
+                                cursor: pointer;
+                                font-family: 'Cairo', Arial;
+                            ">
+                                🔄 أعد التحميل
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+    </script>
+    <script src="../js/config.js"></script>
+    <script src="../js/debug.js"></script>
+    <script>
+        function switchForm(formType) {
+            // تحديث الأزرار
+            document.querySelectorAll('.toggle-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // تحديث الأقسام
+            document.querySelectorAll('.form-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(`${formType}-section`).classList.add('active');
+
+            // إخفاء الأخطاء
+            document.getElementById('login-error').classList.remove('show');
+            document.getElementById('register-error').classList.remove('show');
+        }
+
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.classList.add('show');
+        }
+
+        function hideError(elementId) {
+            const element = document.getElementById(elementId);
+            element.classList.remove('show');
+        }
+
+        function showSuccess(message) {
+            const element = document.getElementById('register-success');
+            element.textContent = message;
+            element.classList.add('show');
+        }
+
+        // تسجيل الدخول
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideError('login-error');
+
+            // التحقق من أن config تم تحميله
+            if (typeof loginUser !== 'function') {
+                showError('login-error', 'حدث خطأ في تحميل النظام. يرجى تحديث الصفحة.');
+                return;
+            }
+
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            const result = await loginUser(email, password);
+
+            if (result.success) {
+                // إعادة توجيه إلى الصفحة الرئيسية أو لوحة التحكم
+                if (result.user.role === 'admin') {
+                    window.location.href = '../admin/dashboard.html';
+                } else {
+                    window.location.href = '../index.html';
+                }
+            } else {
+                showError('login-error', result.message);
+            }
+        });
+
+        // إنشاء حساب
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideError('register-error');
+
+            // التحقق من أن config تم تحميله
+            if (typeof registerUser !== 'function') {
+                showError('register-error', 'حدث خطأ في تحميل النظام. يرجى تحديث الصفحة.');
+                return;
+            }
+
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const phone = document.getElementById('register-phone').value;
+            const password = document.getElementById('register-password').value;
+            const isChurchMember = document.getElementById('is-church-member').checked;
+
+            // التحقق من البريد الإلكتروني
+            if (!email || email.trim() === '') {
+                showError('register-error', 'البريد الإلكتروني مطلوب');
+                return;
+            }
+
+            if (password.length < 6) {
+                showError('register-error', 'كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+                return;
+            }
+
+            const result = await registerUser({
+                name,
+                email: email,
+                phone: phone || null,
+                password,
+                is_church_member: isChurchMember
+            });
+
+            if (result.success) {
+                showSuccess(result.message);
+                document.getElementById('register-form').reset();
+                setTimeout(() => {
+                    switchForm('login');
+                }, 2000);
+            } else {
+                showError('register-error', result.message);
+            }
+        });
+    </script>
+</body>
+</html>

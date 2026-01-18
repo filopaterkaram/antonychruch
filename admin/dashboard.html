@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - كنيسة القديس أنطونيوس</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        /* Admin Dashboard Styles */
+        .admin-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background-color: #1a3a52;
+            color: white;
+            padding: 20px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-logo img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .sidebar-logo span {
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-nav a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            padding: 12px 15px;
+            border-radius: 6px;
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background-color: #d4af37;
+            color: #1a3a52;
+        }
+
+        .main-content {
+            margin-right: 250px;
+            padding: 30px 40px;
+            background-color: #f8f9fa;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .admin-header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(26, 58, 82, 0.08);
+        }
+
+        .admin-header h2 {
+            color: #1a3a52;
+            margin: 0;
+        }
+
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
+
+        /* Cards and Tables */
+        .admin-card {
+            background: white;
+            padding: 30px 35px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            direction: rtl;
+            text-align: right;
+            border: 1px solid rgba(26, 58, 82, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .admin-card:hover {
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .admin-card h3 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: #1a3a52;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .admin-card p {
+            margin: 15px 0;
+            font-size: 16px;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .admin-card p strong {
+            color: #1a3a52;
+            font-weight: 600;
+        }
+
+        .admin-card ol {
+            margin: 20px 0;
+            padding-right: 35px;
+        }
+
+        .admin-card li {
+            margin: 12px 0;
+            font-size: 15px;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table thead {
+            background-color: #f0f0f0;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            padding: 12px;
+            text-align: right;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .admin-table th {
+            color: #1a3a52;
+            font-weight: 600;
+        }
+
+        .admin-table tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #1a3a52;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal-close:hover {
+            color: #1a3a52;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-accept {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-accept:hover {
+            background-color: #218838;
+        }
+
+        .btn-reject {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-reject:hover {
+            background-color: #c82333;
+        }
+
+        .btn-edit {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 20px;
+            align-items: start;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+            }
+
+            .main-content {
+                margin-right: 0;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <img src="../images/church-logo.png" alt="شعار">
+                <span>لوحة التحكم</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <li><a href="#dashboard" class="nav-link active" onclick="switchSection('dashboard')">لوحة المتابعة</a></li>
+                <li><a href="#users" class="nav-link" onclick="switchSection('users')">إدارة المستخدمين</a></li>
+                <li><a href="#services" class="nav-link" onclick="switchSection('services')">إدارة الخدمات</a></li>
+                <li><a href="#sermons" class="nav-link" onclick="switchSection('sermons')">إدارة الوعظات</a></li>
+                <li><a href="#exams" class="nav-link" onclick="switchSection('exams')">إدارة الامتحانات</a></li>
+                <li><a href="#certificates" class="nav-link" onclick="switchSection('certificates')">إدارة الشهادات</a></li>
+                <li><a href="#admins" class="nav-link" onclick="switchSection('admins')">إدارة الأدمن</a></li>
+                <li style="margin-top: 20px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.1);">
+                    <a href="#" onclick="logoutAdmin()">تسجيل الخروج</a>
+                </li>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <div id="dashboard" class="content-section active">
+                <div class="admin-header">
+                    <h2>لوحة المتابعة</h2>
+                    <div id="user-greeting">مرحباً بك</div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="admin-card">
+                        <h3>إحصائيات سريعة</h3>
+                        <div style="margin-top: 20px;">
+                            <p><strong>المستخدمون النشطون:</strong> <span id="active-users">0</span></p>
+                            <p><strong>حسابات قيد المراجعة:</strong> <span id="pending-users">0</span></p>
+                            <p><strong>الخدمات المتاحة:</strong> <span id="total-services">0</span></p>
+                            <p><strong>الامتحانات:</strong> <span id="total-exams">0</span></p>
+                        </div>
+                    </div>
+
+                    <div class="admin-card">
+                        <h3>أفضل 10 متفوقين</h3>
+                        <div id="top-users-list" style="margin-top: 20px;">
+                            <p>جاري التحميل...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Management Section -->
+            <div id="users" class="content-section">
+                <div class="admin-header">
+                    <h2>إدارة المستخدمين</h2>
+                </div>
+
+                <div class="admin-card">
+                    <h3 style="margin-top: 0;">حسابات قيد المراجعة</h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>الاسم</th>
+                                <th>الهاتف</th>
+                                <th>نوع</th>
+                                <th>التاريخ</th>
+                                <th>الإجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pending-users-list">
+                            <tr><td colspan="5">جاري التحميل...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="admin-card">
+                    <h3 style="margin-top: 0;">جميع المستخدمين النشطين</h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>الاسم</th>
+                                <th>الهاتف</th>
+                                <th>نوع</th>
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="all-users-list">
+                            <tr><td colspan="4">جاري التحميل...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Services Management Section -->
+            <div id="services" class="content-section">
+                <div class="admin-header">
+                    <h2>إدارة الخدمات</h2>
+                    <button class="btn btn-primary" onclick="openAddServiceModal()">+ إضافة خدمة</button>
+                </div>
+
+                <div class="admin-card">
+                    <div id="services-list">
+                        <p>جاري التحميل...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sermons Management Section -->
+            <div id="sermons" class="content-section">
+                <div class="admin-header">
+                    <h2>إدارة الوعظات</h2>
+                    <button class="btn btn-primary" onclick="openAddSermonModal()">+ إضافة وعظة</button>
+                </div>
+
+                <div class="admin-card">
+                    <div id="sermons-list">
+                        <p>جاري التحميل...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exams Management Section -->
+            <div id="exams" class="content-section">
+                <div class="admin-header">
+                    <h2>إدارة الامتحانات</h2>
+                    <button class="btn btn-primary" onclick="openAddExamModal()">+ إضافة امتحان</button>
+                </div>
+
+                <div class="admin-card">
+                    <div id="exams-list">
+                        <p>جاري التحميل...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certificates Management Section -->
+            <div id="certificates" class="content-section">
+                <div class="admin-header">
+                    <h2>إدارة الشهادات</h2>
+                    <button class="btn btn-primary" onclick="openAddCertificateModal()">+ تحميل نموذج شهادة</button>
+                </div>
+
+                <div class="admin-card">
+                    <h3>نماذج الشهادات</h3>
+                    <div id="certificates-list">
+                        <p>جاري التحميل...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admins Management Section -->
+            <div id="admins" class="content-section">
+                <div class="admin-header">
+                    <h2>إدارة الأدمن</h2>
+                </div>
+
+                <div class="admin-card">
+                    <h3 style="margin-top: 0;">الأدمن الحاليين</h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>الاسم</th>
+                                <th>الهاتف</th>
+                                <th>الإجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admins-list">
+                            <tr><td colspan="3">جاري التحميل...</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h3 style="margin-top: 30px;">تعيين أدمن جديد</h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>الاسم</th>
+                                <th>الهاتف</th>
+                                <th>الإجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody id="non-admins-list">
+                            <tr><td colspan="3">جاري التحميل...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- Add Service Modal -->
+    <div id="add-service-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>إضافة خدمة جديدة</h3>
+                <button class="modal-close" onclick="closeModal('add-service-modal')">&times;</button>
+            </div>
+            <form id="add-service-form">
+                <div class="form-group">
+                    <label for="service-name">اسم الخدمة</label>
+                    <input type="text" id="service-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="service-desc">الوصف</label>
+                    <textarea id="service-desc" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="service-password">كلمة السر الخاصة بالخدمة</label>
+                    <input type="text" id="service-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">إضافة</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Sermon Modal -->
+    <div id="add-sermon-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>إضافة وعظة جديدة</h3>
+                <button class="modal-close" onclick="closeModal('add-sermon-modal')">&times;</button>
+            </div>
+            <form id="add-sermon-form">
+                <div class="form-group">
+                    <label for="sermon-date">التاريخ</label>
+                    <input type="date" id="sermon-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="sermon-title">عنوان الوعظة</label>
+                    <input type="text" id="sermon-title" required>
+                </div>
+                <div class="form-group">
+                    <label for="sermon-service">الخدمة</label>
+                    <select id="sermon-service" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="sermon-content">محتوى الوعظة</label>
+                    <textarea id="sermon-content" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">إضافة</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Exam Modal -->
+    <div id="add-exam-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>إضافة امتحان جديد</h3>
+                <button class="modal-close" onclick="closeModal('add-exam-modal')">&times;</button>
+            </div>
+            <form id="add-exam-form">
+                <div class="form-group">
+                    <label for="exam-title">عنوان الامتحان</label>
+                    <input type="text" id="exam-title" required>
+                </div>
+                <div class="form-group">
+                    <label for="exam-description">الوصف</label>
+                    <textarea id="exam-description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="exam-service">الخدمة</label>
+                    <select id="exam-service" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="exam-questions">الأسئلة (JSON)</label>
+                    <textarea id="exam-questions" required placeholder='[{"question": "السؤال؟", "options": ["أ", "ب", "ج"], "correct": 0}]'></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">إضافة</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Certificate Modal -->
+    <div id="add-certificate-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>تحميل نموذج شهادة</h3>
+                <button class="modal-close" onclick="closeModal('add-certificate-modal')">&times;</button>
+            </div>
+            <form id="add-certificate-form">
+                <div class="form-group">
+                    <label for="certificate-exam">الامتحان</label>
+                    <select id="certificate-exam" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="certificate-image">صورة الشهادة</label>
+                    <input type="file" id="certificate-image" accept="image/*" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">تحميل</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/config.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

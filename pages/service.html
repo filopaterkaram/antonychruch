@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الخدمات - كنيسة القديس أنطونيوس</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .service-access-form {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-content {
+            display: none;
+        }
+
+        .service-content.active {
+            display: block;
+        }
+
+        .sermon-item {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border-right: 4px solid #d4af37;
+        }
+
+        .sermon-item h3 {
+            color: #1a3a52;
+            margin-bottom: 10px;
+        }
+
+        .sermon-date {
+            color: #999;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .exam-item {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .exam-item h3 {
+            color: #1a3a52;
+            margin-bottom: 10px;
+        }
+
+        .exam-description {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .result-alert {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .certificate-view {
+            position: relative;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            text-align: center;
+            border: 3px solid #d4af37;
+            margin: 20px 0;
+        }
+
+        .certificate-view h2 {
+            color: #1a3a52;
+            font-size: 32px;
+            margin-bottom: 20px;
+            font-family: 'Palatino Linotype', serif;
+        }
+
+        .certificate-content {
+            border: 2px solid #1a3a52;
+            padding: 30px;
+            margin: 20px 0;
+        }
+
+        .certificate-content p {
+            font-size: 18px;
+            margin: 15px 0;
+            color: #333;
+        }
+
+        .certificate-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #d4af37;
+        }
+
+        .certificate-score {
+            font-size: 20px;
+            color: #1a3a52;
+        }
+
+        .certificate-logo {
+            width: 100px;
+            height: 100px;
+            margin: 20px auto;
+        }
+
+        .certificate-signature {
+            margin-top: 30px;
+            border-top: 2px solid #1a3a52;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <img src="../images/church-logo.png" alt="شعار الكنيسة" class="logo-img">
+                    <span class="logo-text">كنيسة القديس أنطونيوس</span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="../index.html" class="nav-link">الرئيسية</a></li>
+                    <li><a href="#" class="nav-link" onclick="logout()">تسجيل الخروج</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section style="padding: 40px 20px; background-color: #f8f9fa;">
+        <div class="container">
+            <div id="greeting" style="text-align: center; margin-bottom: 40px;">
+                <h1 id="user-name" style="color: #1a3a52; font-size: 32px;">مرحباً بك</h1>
+            </div>
+
+            <!-- Service Access Form -->
+            <div id="service-access" class="service-access-form">
+                <h2 style="color: #1a3a52; margin-bottom: 20px;">دخول الخدمة</h2>
+                <form id="service-password-form">
+                    <div class="form-group">
+                        <label for="service-password">كلمة سر الخدمة</label>
+                        <input type="password" id="service-password" placeholder="أدخل كلمة سر الخدمة" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">دخول</button>
+                </form>
+            </div>
+
+            <!-- Service Content -->
+            <div id="service-content" class="service-content">
+                <!-- Sermons Section -->
+                <div style="margin-bottom: 40px;">
+                    <h2 style="color: #1a3a52; margin-bottom: 20px;">الوعظات</h2>
+                    <div id="sermons-list"></div>
+                </div>
+
+                <!-- Exams Section -->
+                <div>
+                    <h2 style="color: #1a3a52; margin-bottom: 20px;">الامتحانات</h2>
+                    <div id="exams-list"></div>
+                </div>
+            </div>
+
+            <!-- Exam Section -->
+            <div id="exam-view" style="display: none;">
+                <button class="btn btn-secondary" onclick="backToExams()" style="margin-bottom: 20px;">← رجوع</button>
+                <div class="admin-card">
+                    <h2 id="exam-title" style="color: #1a3a52;"></h2>
+                    <div id="exam-container"></div>
+                </div>
+            </div>
+
+            <!-- Result Certificate -->
+            <div id="certificate-view" style="display: none;">
+                <button class="btn btn-secondary" onclick="backToExams()" style="margin-bottom: 20px;">← رجوع</button>
+                <div class="certificate-view">
+                    <h2>شهادة إكمال</h2>
+                    <div class="certificate-content">
+                        <img src="../images/church-logo.png" alt="شعار الكنيسة" class="certificate-logo">
+                        <p>تشهد هذه الشهادة بأن</p>
+                        <p class="certificate-name" id="cert-user-name"></p>
+                        <p>قد اجتاز بنجاح امتحان</p>
+                        <p style="font-weight: bold; font-size: 20px;" id="cert-exam-title"></p>
+                        <p class="certificate-score">الدرجة: <span id="cert-score"></span>%</p>
+                        <p style="margin-top: 20px; font-size: 14px;">
+                            صدرت هذه الشهادة بتاريخ <span id="cert-date"></span>
+                        </p>
+                        <div class="certificate-signature">
+                            <p style="margin-top: 30px;">آباء الكنيسة</p>
+                            <p>_________________</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="printCertificate()">طباعة الشهادة</button>
+                    <button class="btn btn-secondary" onclick="downloadCertificate()" style="margin-right: 10px;">تحميل الشهادة</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 كنيسة القديس العظيم الأنبا أنطونيوس - جميع الحقوق محفوظة</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/config.js"></script>
+    <script>
+        let currentServiceId = null;
+        let currentExamId = null;
+        let currentUserId = null;
+        let serviceUnlocked = false;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = await getCurrentUser();
+            
+            if (!user) {
+                window.location.href = '../pages/login.html';
+                return;
+            }
+
+            currentUserId = user.id;
+            document.getElementById('user-name').textContent = `أهلاً يا ${user.name}`;
+
+            // الحصول على معرف الخدمة من URL
+            const params = new URLSearchParams(window.location.search);
+            currentServiceId = params.get('id');
+
+            if (!currentServiceId) {
+                window.location.href = '../index.html';
+                return;
+            }
+
+            // التحقق من أن المستخدم عضو كنيسة
+            if (!user.is_church_member) {
+                document.getElementById('service-access').innerHTML = '<p style="color: red;">عذراً، هذه الخدمة مخصصة لأعضاء الكنيسة فقط</p>';
+                return;
+            }
+
+            loadServiceData();
+        });
+
+        async function loadServiceData() {
+            try {
+                // تحميل الوعظات
+                const { data: sermons } = await supabase
+                    .from('sermons')
+                    .select('*')
+                    .eq('service_id', currentServiceId)
+                    .order('date', { ascending: false });
+
+                displaySermons(sermons || []);
+
+                // تحميل الامتحانات
+                const { data: exams } = await supabase
+                    .from('exams')
+                    .select('*')
+                    .eq('service_id', currentServiceId)
+                    .order('created_at', { ascending: false });
+
+                displayExams(exams || []);
+            } catch (error) {
+                console.error('خطأ:', error);
+            }
+        }
+
+        function displaySermons(sermons) {
+            const container = document.getElementById('sermons-list');
+            
+            if (sermons.length === 0) {
+                container.innerHTML = '<p>لا توجد وعظات لهذه الخدمة</p>';
+                return;
+            }
+
+            container.innerHTML = sermons.map(sermon => `
+                <div class="sermon-item">
+                    <h3>${sermon.title}</h3>
+                    <p class="sermon-date">${new Date(sermon.date).toLocaleDateString('ar-EG')}</p>
+                    <p>${sermon.content}</p>
+                </div>
+            `).join('');
+        }
+
+        function displayExams(exams) {
+            const container = document.getElementById('exams-list');
+            
+            if (exams.length === 0) {
+                container.innerHTML = '<p>لا توجد امتحانات لهذه الخدمة</p>';
+                return;
+            }
+
+            container.innerHTML = exams.map(exam => `
+                <div class="exam-item">
+                    <h3>${exam.title}</h3>
+                    <p class="exam-description">${exam.description}</p>
+                    <button class="btn btn-primary" onclick="startExam('${exam.id}')">بدء الامتحان</button>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('service-password-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const password = document.getElementById('service-password').value;
+
+            try {
+                // التحقق من كلمة السر
+                const { data: pwd } = await supabase
+                    .from('service_passwords')
+                    .select('*')
+                    .eq('service_id', currentServiceId)
+                    .single();
+
+                if (pwd && pwd.password === password) {
+                    serviceUnlocked = true;
+                    document.getElementById('service-access').style.display = 'none';
+                    document.getElementById('service-content').classList.add('active');
+                } else {
+                    alert('كلمة السر غير صحيحة');
+                }
+            } catch (error) {
+                console.error('خطأ:', error);
+            }
+        });
+
+        async function startExam(examId) {
+            currentExamId = examId;
+
+            try {
+                const { data: exam } = await supabase
+                    .from('exams')
+                    .select('*')
+                    .eq('id', examId)
+                    .single();
+
+                // التحقق من وجود إجابة سابقة
+                const result = await getUserExamResult(examId, currentUserId);
+                
+                if (result.data) {
+                    showCertificate(examId, result.data);
+                    return;
+                }
+
+                document.getElementById('service-content').classList.remove('active');
+                document.getElementById('exam-view').style.display = 'block';
+                document.getElementById('exam-title').textContent = exam.title;
+
+                const questions = Array.isArray(exam.questions) ? exam.questions : [];
+                displayExamQuestions(questions);
+            } catch (error) {
+                console.error('خطأ:', error);
+            }
+        }
+
+        function displayExamQuestions(questions) {
+            const container = document.getElementById('exam-container');
+            
+            if (questions.length === 0) {
+                container.innerHTML = '<p>لا توجد أسئلة في هذا الامتحان</p>';
+                return;
+            }
+
+            let html = '<form id="exam-form">';
+            
+            questions.forEach((q, index) => {
+                html += `
+                    <div class="form-group" style="margin-bottom: 30px; padding: 20px; background: #f9f9f9; border-radius: 8px;">
+                        <label style="font-weight: bold; color: #1a3a52;">
+                            ${index + 1}. ${q.question}
+                        </label>
+                        <div style="margin-top: 15px;">
+                            ${q.options.map((option, optionIndex) => `
+                                <div style="margin-bottom: 10px;">
+                                    <input type="radio" id="q${index}_${optionIndex}" name="q${index}" value="${optionIndex}" required>
+                                    <label for="q${index}_${optionIndex}" style="margin-right: 10px; font-weight: normal;">${option}</label>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '<button type="submit" class="btn btn-primary" style="width: 100%;">إرسال الامتحان</button>';
+            html += '</form>';
+
+            container.innerHTML = html;
+
+            document.getElementById('exam-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await submitExam(questions);
+            });
+        }
+
+        async function submitExam(questions) {
+            const answers = [];
+            let score = 0;
+
+            questions.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                const answer = selected ? parseInt(selected.value) : -1;
+                answers.push(answer);
+
+                if (answer === q.correct) {
+                    score++;
+                }
+            });
+
+            const percentage = Math.round((score / questions.length) * 100);
+
+            try {
+                // حفظ الإجابات
+                const { error } = await supabase
+                    .from('exam_answers')
+                    .insert([{
+                        exam_id: currentExamId,
+                        user_id: currentUserId,
+                        answers: answers,
+                        score: percentage,
+                        submitted_at: new Date().toISOString()
+                    }]);
+
+                if (error) throw error;
+
+                // إنشاء شهادة
+                await generateCertificate(currentExamId, currentUserId);
+
+                // عرض الشهادة
+                showCertificate(currentExamId);
+            } catch (error) {
+                console.error('خطأ:', error);
+                alert('حدث خطأ أثناء حفظ النتيجة');
+            }
+        }
+
+        async function showCertificate(examId) {
+            try {
+                const { data: exam } = await supabase
+                    .from('exams')
+                    .select('*')
+                    .eq('id', examId)
+                    .single();
+
+                const { data: answer } = await supabase
+                    .from('exam_answers')
+                    .select('*')
+                    .eq('exam_id', examId)
+                    .eq('user_id', currentUserId)
+                    .single();
+
+                const user = await getCurrentUser();
+
+                document.getElementById('exam-view').style.display = 'none';
+                document.getElementById('certificate-view').style.display = 'block';
+
+                document.getElementById('cert-user-name').textContent = user.name;
+                document.getElementById('cert-exam-title').textContent = exam.title;
+                document.getElementById('cert-score').textContent = answer.score;
+                document.getElementById('cert-date').textContent = new Date(answer.submitted_at).toLocaleDateString('ar-EG');
+            } catch (error) {
+                console.error('خطأ:', error);
+            }
+        }
+
+        function backToExams() {
+            document.getElementById('exam-view').style.display = 'none';
+            document.getElementById('certificate-view').style.display = 'none';
+            document.getElementById('service-content').classList.add('active');
+            currentExamId = null;
+        }
+
+        function printCertificate() {
+            window.print();
+        }
+
+        function downloadCertificate() {
+            const element = document.getElementById('certificate-view');
+            const opt = {
+                margin: 10,
+                filename: 'شهادة.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+            };
+
+            // يمكن استخدام مكتبة html2pdf
+            alert('يمكنك طباعة الشهادة مباشرة باستخدام Ctrl+P');
+        }
+
+        async function logout() {
+            const result = await logoutUser();
+            if (result.success) {
+                window.location.href = '../pages/login.html';
+            }
+        }
+    </script>
+</body>
+</html>

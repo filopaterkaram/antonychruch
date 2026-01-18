@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كنيسة القديس العظيم الأنبا أنطونيوس - المنيا</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <div class="logo">
+                    <img src="images/church-logo.png" alt="شعار الكنيسة" class="logo-img">
+                    <span class="logo-text">كنيسة القديس أنطونيوس - المنيا</span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#home" class="nav-link active">الرئيسية</a></li>
+                    <li><a href="#today-sermon" class="nav-link">وعظة اليوم</a></li>
+                    <li><a href="#services" class="nav-link">الخدمات</a></li>
+                    <li><a href="#exams" class="nav-link">الامتحانات</a></li>
+                    <li><a href="pages/login.html" class="nav-link auth-btn">تسجيل الدخول</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1 class="hero-title">أهلاً وسهلاً بك في كنيستنا</h1>
+            <p class="hero-subtitle">نهضة كنيسة القديس العظيم الأنبا أنطونيوس بالمنيا</p>
+            <button class="btn btn-primary" onclick="window.location.href='pages/login.html'">
+                ابدأ رحلتك معنا
+            </button>
+        </div>
+        <div class="hero-overlay"></div>
+    </section>
+
+    <!-- Today's Sermon Section -->
+    <section class="today-sermon" id="today-sermon">
+        <div class="container">
+            <h2 class="section-title">وعظة اليوم</h2>
+            <div class="sermon-card" id="sermon-container">
+                <p class="loading">جاري التحميل...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="container">
+            <h2 class="section-title">خدماتنا</h2>
+            <div class="services-grid" id="services-grid">
+                <p class="loading">جاري تحميل الخدمات...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="statistics">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 class="stat-number" id="members-count">0</h3>
+                    <p class="stat-label">أعضاء نشطين</p>
+                </div>
+                <div class="stat-card">
+                    <h3 class="stat-number" id="exams-count">0</h3>
+                    <p class="stat-label">امتحانات أكملت</p>
+                </div>
+                <div class="stat-card">
+                    <h3 class="stat-number" id="certificates-count">0</h3>
+                    <p class="stat-label">شهادات صادرة</p>
+                </div>
+                <div class="stat-card">
+                    <h3 class="stat-number" id="sermons-count">0</h3>
+                    <p class="stat-label">وعظات متاحة</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>عن الكنيسة</h4>
+                    <p>كنيسة القديس العظيم الأنبا أنطونيوس تعمل على نشر الكلمة والعلم الروحي.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>روابط سريعة</h4>
+                    <ul>
+                        <li><a href="#home">الرئيسية</a></li>
+                        <li><a href="#services">الخدمات</a></li>
+                        <li><a href="#exams">الامتحانات</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>تابعنا</h4>
+                    <p>البريد الإلكتروني: info@antonios-minya.com</p>
+                    <p>الهاتف: +20 1234567890</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 كنيسة القديس العظيم الأنبا أنطونيوس - جميع الحقوق محفوظة</p>
+            </div>
+        </div>
+    </footer>
+
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script>
+        // فحص ما إذا تم تحميل Supabase بنجاح
+        window.addEventListener('load', function() {
+            if (typeof window.supabase === 'undefined') {
+                console.error('❌ فشل تحميل مكتبة Supabase من CDN');
+                console.warn('⚠️ تحقق من:');
+                console.warn('1. الاتصال بالإنترنت');
+                console.warn('2. أن رابط CDN صحيح');
+                
+                // عرض رسالة للمستخدم
+                const warning = document.createElement('div');
+                warning.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #f44336;
+                    color: white;
+                    padding: 15px;
+                    border-radius: 6px;
+                    z-index: 10000;
+                    max-width: 350px;
+                    font-family: Arial, sans-serif;
+                    direction: rtl;
+                `;
+                warning.innerHTML = `
+                    <strong>⚠️ تنبيه:</strong><br>
+                    مشكلة في الاتصال بالإنترنت أو تحميل المكتبات.<br>
+                    <small>تحقق من الاتصال وأعد تحميل الصفحة.</small>
+                `;
+                document.body.appendChild(warning);
+                
+                // إزالة الرسالة بعد 10 ثواني
+                setTimeout(() => {
+                    if (warning.parentNode) warning.parentNode.removeChild(warning);
+                }, 10000);
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
